@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>VULCAN | FRESH STREAM</title>
+    <style>
+        :root { --bg: #1e2025; --panel: #282a30; --text: #ffffff; --green: #00c389; --grey: #8a8d9a; --border: #4a4d55; --danger: #ff4d4d; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: #121214; 
+            color: var(--text); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; /* Prevents bounce scrolling on mobile */
+        }
+
+        #mod-menu {
+            width: 100%; /* Fill mobile width */
+            max-width: 450px; 
+            height: 100%; /* Fill mobile height */
+            max-height: 90vh;
+            background: var(--bg); 
+            border-radius: 16px; 
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+            position: relative; 
+            display: flex; 
+            flex-direction: column;
+            margin: 10px;
+        }
+
+        /* --- LOGO STYLING --- */
+        .logo-header svg {
+            filter: drop-shadow(0 0 5px var(--green));
+        }
+        
+        /* Ensure the viewer (Inbox) fills the screen on mobile */
+        #viewer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg);
+            z-index: 100; display: none; flex-direction: column; padding: 20px; border-radius: 16px;
+        }
+
+        /* Rest of your existing CSS remains the same... */
+        .logo-header { text-align: center; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .logo-header h1 { font-size: 22px; text-transform: uppercase; letter-spacing: 2px; color: #a5f3e0; margin: 0; }
+        .address-section { border: 2px dashed var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        #addr-box { background: #000; border-radius: 50px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        #addr-display { font-size: 14px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .v-btn { border: none; border-radius: 50px; padding: 16px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .change-btn { background: var(--grey); color: #fff; }
+        .copy-btn { background: var(--green); color: #fff; }
+        .save-btn { background: #3d4048; color: #fff; width: 100%; border: 1px solid var(--border); }
+        #inbox-bar { background: var(--panel); border-radius: 50px; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-top: 10px; }
+        .inbox-count { background: var(--green); border-radius: 50px; padding: 3px 12px; font-size: 13px; color: #fff; font-weight: bold; }
+        .exit-btn { background: var(--danger); color: white; border: none; padding: 8px 18px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        #view-body { background: #fff; color: #000; padding: 20px; border-radius: 12px; overflow-y: auto; flex-grow: 1; font-size: 14px; }
+        .saved-label { font-size: 12px; color: var(--grey); text-transform: uppercase; margin: 20px 0 10px 10px; font-weight: bold; }
+        #saved-list { flex-grow: 1; overflow-y: auto; border-top: 1px solid #333; padding-top: 10px; }
+        .saved-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; }
+        .saved-text { font-size: 13px; color: var(--green); cursor: pointer; overflow: hidden; text-overflow: ellipsis; }
+        .del-icon { color: var(--danger); cursor: pointer; font-weight: bold; padding: 5px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="mod-menu">
+        <div class="logo-header">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#34a853"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#4285f4"/></svg>
+            <h1>VULCAN FRESH</h1>
+        </div>
+
+        <div class="address-section">
+            <div id="addr-box">
+                <div id="addr-display">INITIALIZING...</div>
+            </div>
+            <div class="btn-row">
+                <button class="v-btn change-btn" onclick="genNew()">Change</button>
+                <button class="v-btn copy-btn" onclick="copyAddr()">Copy</button>
+            </div>
+            <button class="v-btn save-btn" onclick="saveCurrent()">💾 SAVE SESSION</button>
+        </div>
+
+        <div id="inbox-bar" onclick="showInbox()">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+                <span style="font-weight:bold; font-size:16px;">Inbox</span>
+            </div>
+            <div class="inbox-count" id="count">0</div>
+        </div>
+
+        <div class="saved-label">Stored Sessions</div>
+        <div id="saved-list"></div>
+
+        <div id="viewer">
+            <div class="header-row">
+                <h3 style="margin:0; font-size:18px; color:var(--green);">Packet Stream</h3>
+                <button class="exit-btn" onclick="hideViewer()">EXIT X</button>
+            </div>
+            <div id="view-body">Select a message...</div>
+        </div>
+    </div>
+
+    <script>
+        // ... (Paste your JS here)
+    </script>
+</body>
+</html>
