@@ -1,15 +1,18 @@
 {
-  "name": "Vulcan Fresh",
-  "short_name": "Vulcan",
+  "name": "Temp Gmails",
+  "short_name": "Temp Gmails",
+  "description": "Secure Temporary Packet Stream and Mailbox",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0a0a0c",
-  "theme_color": "#4285f4",
+  "background_color": "#080808",
+  "theme_color": "#00ff88",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "https://img.icons8.com/color/512/gmail-new.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
