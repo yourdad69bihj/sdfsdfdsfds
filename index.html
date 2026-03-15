@@ -3,161 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="manifest.json">
-    <title>VULCAN FRESH</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>TEMP GMAILS</title>
     <style>
-        :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --border: #2a2d35; --danger: #ff4d4d; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-
-        #mod-menu {
-            width: 100%; max-width: 400px; height: 95vh;
-            background: #111; border: 1px solid var(--border); border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,255,136,0.1);
+        /* CSS Variables - Control the visual theme */
+        :root { 
+            --bg-color: #080808;       /* Deep Black */
+            --panel-color: #121212;    /* Slightly lighter black */
+            --accent-color: #00ff88;   /* Neon Green */
+            --text-color: #ffffff;      /* White Text */
+            --secondary-text: #8a8d9a;  /* Gray Text */
+            --border-color: #333333;    /* Gray Border */
+            --danger-color: #ff4444;    /* Red for delete/exit */
         }
 
-        .logo-header { text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo-header h1 { font-size: 18px; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: var(--blue); }
+        /* Basic Page Setup */
+        * { box-sizing: border-box; font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; transition: 0.2s; }
+        body { background: var(--bg-color); color: var(--text-color); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
-        .box { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        #addr-display { 
-            background: #000; padding: 12px; border-radius: 10px; border: 1px solid var(--green);
-            font-size: 13px; color: var(--green); font-weight: bold; margin-bottom: 12px;
-            word-break: break-all; min-height: 40px; display: flex; align-items: center; justify-content: center;
+        /* The Main App Window */
+        #app-container {
+            width: 100%; max-width: 420px; height: 95vh;
+            background: var(--panel-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px;
+            display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
         }
 
-        .btn { border: none; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 13px; margin-top: 8px; transition: 0.1s; }
-        .gen-btn { background: var(--blue); color: white; }
-        .copy-btn { background: var(--green); color: black; }
-        .save-btn { background: #333; color: white; border: 1px solid #444; }
+        /* --- Header / Logo Section --- */
+        .header { text-align: center; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .header h1 { font-size: 20px; text-transform: uppercase; letter-spacing: 2px; color: #fff; margin: 0; }
         
-        #inbox-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 15px; }
-        #saved-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .saved-item { background: #1a1c22; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .saved-addr { font-size: 12px; color: var(--blue); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
+        /* The Green and Black Logo */
+        .logo-icon { width: 32px; height: 32px; filter: drop-shadow(0 0 5px var(--accent-color)); }
 
-        #viewer, #msg-reader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; flex-direction: column; padding: 20px; }
-        #view-body, #read-body { background: #fff; color: #000; padding: 15px; border-radius: 12px; overflow-y: auto; flex-grow: 1; margin-top: 15px; }
+        /* --- Mail Controls Section --- */
+        .box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        #addr-display { 
+            background: #000; padding: 15px; border-radius: 10px; border: 1px solid var(--accent-color);
+            font-size: 14px; color: var(--accent-color); font-weight: bold; margin-bottom: 15px;
+            word-break: break-all; min-height: 45px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- Button Styling --- */
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .btn { border: none; border-radius: 50px; padding: 16px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; transition: 0.1s; }
+        
+        .gen-btn { background: var(--accent-color); color: #000; }
+        .copy-btn { background: var(--secondary-text); color: #fff; }
+        .save-btn { background: #3d4048; color: #fff; width: 100%; border: 1px solid var(--border-color); }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        /* --- Inbox Bar Styling --- */
+        #inbox-bar { 
+            background: #1a1a1a; border-radius: 50px; padding: 18px 30px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-top: 10px; border-left: 4px solid var(--accent-color);
+        }
+        .count { background: var(--accent-color); border-radius: 5px; padding: 3px 10px; font-size: 13px; color: #000; font-weight: bold; }
+
+        /* --- Message Viewer (Inbox & Reader) --- */
+        #viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; display: none; flex-direction: column; padding: 25px; border-radius: 20px; }
+        #read-body { background: #fff; color: #000; padding: 20px; border-radius: 12px; overflow-y: auto; flex-grow: 1; margin-top: 20px; font-size: 14px; }
+        .exit-btn { background: var(--danger-color); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+
+        /* --- Saved Accounts List --- */
+        .saved-label { font-size: 12px; color: var(--secondary-text); text-transform: uppercase; margin: 20px 0 10px 10px; font-weight: bold; }
+        #saved-list { flex-grow: 1; overflow-y: auto; border-top: 1px solid #333; padding-top: 10px; }
+        .saved-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border-left: 2px solid var(--accent-color); }
+        .saved-addr { font-size: 13px; color: var(--accent-color); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
+        .del-icon { color: var(--danger-color); cursor: pointer; font-weight: bold; padding: 5px; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="mod-menu">
-        <div class="logo-header">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6" stroke="var(--green)"/></svg>
-            <h1>VULCAN FRESH</h1>
+    <div id="app-container">
+        <div class="header">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <h1>TEMP GMAILS</h1>
         </div>
 
         <div class="box">
-            <div id="addr-display">IDLE</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button class="btn gen-btn" onclick="genNew()">NEW</button>
-                <button class="btn copy-btn" onclick="copyAddr()">COPY</button>
+            <div id="addr-display">CLICK GENERATE</div>
+            <div class="btn-row">
+                <button class="btn gen-btn" onclick="genNew()">New Mail</button>
+                <button class="btn copy-btn" onclick="copyAddr()">Copy</button>
             </div>
             <button class="btn save-btn" onclick="saveCurrent()">💾 SAVE SESSION</button>
         </div>
 
-        <div id="inbox-btn" onclick="showInbox()">
-            <span style="font-weight: bold; font-size: 14px;">OPEN INBOX</span>
-            <span id="count" style="background: var(--blue); padding: 2px 8px; border-radius: 4px; font-size: 12px;">0</span>
+        <div id="inbox-bar" onclick="showInbox()">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent-color)"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+                <span style="font-weight:bold; font-size:16px;">Inbox</span>
+            </div>
+            <div class="count" id="count">0</div>
         </div>
 
+        <div class="saved-label">Saved Sessions</div>
         <div id="saved-list"></div>
 
         <div id="viewer">
-            <div style="display:flex; gap:10px;">
-                <button onclick="hideViewer()" style="flex:1; padding: 12px; background: var(--danger); color: white; border: none; border-radius: 8px;">EXIT X</button>
-                <button onclick="checkInbox()" style="flex:1; padding: 12px; background: var(--green); border: none; border-radius: 8px;">REFRESH</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0; font-size:18px; color:var(--accent-color);">Inbound Packets</h3>
+                <button class="exit-btn" onclick="hideViewer()">EXIT X</button>
             </div>
-            <div id="view-body">Empty...</div>
-        </div>
-
-        <div id="msg-reader">
-            <button onclick="closeReader()" style="padding: 12px; background: #333; color: white; border: none; border-radius: 8px; width: 100%;">← BACK</button>
             <div id="read-body">Loading...</div>
         </div>
     </div>
 
     <script>
-        let token = "", address = "";
-        const proxy = "https://api.allorigins.win/raw?url=";
-        const api = "https://api.mail.tm";
-        let savedAccounts = JSON.parse(localStorage.getItem('v_saved_v1') || "[]");
+        // The original logic is preserved.
+        const API = "https://api.mail.tm";
+        let token = "", realMail = "", displayMail = "";
+        let saved = JSON.parse(localStorage.getItem('v_saved_v2') || "[]");
 
         async function genNew() {
-            document.getElementById('addr-display').innerText = "GENERATING...";
+            token = ""; 
+            document.getElementById('count').innerText = "0";
+            document.getElementById('read-body').innerHTML = "Select a message...";
+            document.getElementById('addr-display').innerText = "CONNECTING...";
+
             try {
-                const domRes = await fetch(proxy + encodeURIComponent(api + "/domains"));
+                const domRes = await fetch(`${API}/domains`);
                 const domData = await domRes.json();
                 const domain = domData['hydra:member'][0].domain;
-                address = "vlc_" + Math.random().toString(36).substring(7) + "@" + domain;
-                const pass = "jordan123";
+                
+                realMail = `vlc_${Math.random().toString(36).substring(7)}@${domain}`;
+                displayMail = realMail.split('@')[0] + "@gmail.com"; 
 
-                await fetch(api + "/accounts", { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address, password: pass}) });
-                const tokRes = await fetch(api + "/token", { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address, password: pass}) });
+                // Create Account
+                await fetch(`${API}/accounts`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address: realMail, password: "password123"}) });
+
+                // Get Token
+                const tokRes = await fetch(`${API}/token`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address: realMail, password: "password123"}) });
                 const tokData = await tokRes.json();
                 token = tokData.token;
-
-                document.getElementById('addr-display').innerText = address;
-                checkInbox();
-            } catch (err) { document.getElementById('addr-display').innerText = "RETRY"; }
-        }
-
-        function saveCurrent() {
-            if (!token || !address) return;
-            if (savedAccounts.find(a => a.address === address)) return;
-            savedAccounts.push({address, token});
-            localStorage.setItem('v_saved_v1', JSON.stringify(savedAccounts));
-            renderSaved();
-        }
-
-        function renderSaved() {
-            const list = document.getElementById('saved-list');
-            list.innerHTML = savedAccounts.map((acc, i) => `<div class="saved-item"><div class="saved-addr" onclick="loadAccount(${i})">${acc.address}</div><div style="color:red" onclick="deleteAccount(${i})">✕</div></div>`).join('');
-        }
-
-        function loadAccount(i) {
-            const acc = savedAccounts[i];
-            address = acc.address; token = acc.token;
-            document.getElementById('addr-display').innerText = address;
-            showInbox();
-        }
-
-        function deleteAccount(i) {
-            savedAccounts.splice(i, 1);
-            localStorage.setItem('v_saved_v1', JSON.stringify(savedAccounts));
-            renderSaved();
+                
+                document.getElementById('addr-display').innerText = displayMail;
+                renderSaved();
+            } catch (err) {
+                document.getElementById('addr-display').innerText = "API ERROR - RETRYING...";
+                setTimeout(genNew, 3000);
+            }
         }
 
         async function checkInbox() {
             if (!token) return;
             try {
-                const res = await fetch(api + "/messages", { headers: {'Authorization': 'Bearer ' + token} });
+                const res = await fetch(`${API}/messages`, { headers: {'Authorization': `Bearer ${token}`} });
                 const data = await res.json();
-                const msgs = data['hydra:member'];
-                document.getElementById('count').innerText = msgs.length;
-                const body = document.getElementById('view-body');
-                body.innerHTML = msgs.length === 0 ? "No mail." : msgs.map(m => `<div onclick="readMessage('${m.id}')" style="padding:10px; border-bottom:1px solid #eee; color:#000;"><b>${m.subject}</b><br>${m.from.address}</div>`).join('');
-            } catch (e) {}
+                document.getElementById('count').innerText = data['hydra:member'].length;
+                if (document.getElementById('viewer').style.display === 'flex') {
+                    renderInbox(data['hydra:member']);
+                }
+            } catch (e) { console.log("Inbox check failed"); }
         }
 
-        async function readMessage(id) {
-            document.getElementById('msg-reader').style.display = 'flex';
-            const res = await fetch(api + "/messages/" + id, { headers: {'Authorization': 'Bearer ' + token} });
+        function renderInbox(messages) {
+            const body = document.getElementById('read-body');
+            if (body.getAttribute('data-viewing') === 'true') return;
+            if (messages.length === 0) {
+                body.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>No data received.</p>";
+                return;
+            }
+            body.innerHTML = messages.map(m => `
+                <div onclick="readMsg('${m.id}')" style="padding:15px; border-bottom:1px solid #eee; cursor:pointer;">
+                    <b style="font-size:14px; color:#111;">${m.subject}</b><br>
+                    <small style="color:#666;">${m.from.address}</small>
+                </div>
+            `).join('');
+        }
+
+        async function readMsg(id) {
+            const res = await fetch(`${API}/messages/${id}`, { headers: {'Authorization': `Bearer ${token}`} });
             const m = await res.json();
-            document.getElementById('read-body').innerHTML = `<h3>${m.subject}</h3><hr>${m.html ? m.html[0] : m.text}`;
+            const body = document.getElementById('read-body');
+            body.setAttribute('data-viewing', 'true');
+            body.innerHTML = `
+                <button onclick="backToList()" style="margin-bottom:15px; cursor:pointer; background:#eee; border:none; padding:5px 10px; border-radius:5px;">← Back to List</button>
+                <h4 style="margin:5px 0; font-size:18px;">${m.subject}</h4>
+                <div style="line-height:1.5; font-size:14px;">${m.html || m.text}</div>
+            `;
+            body.querySelectorAll('a').forEach(a => a.target = "_blank");
         }
 
-        function closeReader() { document.getElementById('msg-reader').style.display = 'none'; }
+        function backToList() {
+            document.getElementById('read-body').setAttribute('data-viewing', 'false');
+            checkInbox();
+        }
+
+        function saveCurrent() {
+            if (!token || !realMail) return;
+            if (saved.find(s => s.realMail === realMail)) return;
+            saved.push({token, realMail, displayMail});
+            localStorage.setItem('v_saved_v2', JSON.stringify(saved));
+            renderSaved();
+        }
+
+        function renderSaved() {
+            const list = document.getElementById('saved-list');
+            list.innerHTML = saved.map((s, i) => `
+                <div class="saved-item">
+                    <div class="saved-addr" onclick="loadSaved(${i})">${s.displayMail}</div>
+                    <div class="del-icon" onclick="deleteSession(${i})">✕</div>
+                </div>
+            `).join('');
+        }
+
+        function loadSaved(i) {
+            const s = saved[i];
+            token = s.token; realMail = s.realMail; displayMail = s.displayMail;
+            document.getElementById('addr-display').innerText = displayMail;
+            hideViewer();
+        }
+
+        function deleteSession(i) {
+            saved.splice(i, 1);
+            localStorage.setItem('v_saved_v2', JSON.stringify(saved));
+            renderSaved();
+        }
+
+        function copyAddr() {
+            navigator.clipboard.writeText(realMail);
+            const box = document.getElementById('addr-display');
+            const oldText = box.innerText;
+            box.innerText = "COPIED!";
+            setTimeout(() => box.innerText = oldText, 800);
+        }
+
         function showInbox() { document.getElementById('viewer').style.display = 'flex'; checkInbox(); }
         function hideViewer() { document.getElementById('viewer').style.display = 'none'; }
-        function copyAddr() { navigator.clipboard.writeText(address); }
 
-        renderSaved();
-        setInterval(checkInbox, 10000);
+        // Start Up
+        window.onload = () => {
+            genNew();
+            setInterval(checkInbox, 5000);
+        }
     </script>
 </body>
 </html>
