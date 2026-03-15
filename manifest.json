@@ -1,10 +1,12 @@
 {
   "name": "Vulcan Fresh Stream",
   "short_name": "Vulcan",
-  "start_url": ".",
+  "description": "Secure Temporary Packet Stream and Mailbox",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#121214",
-  "theme_color": "#00c389",
+  "background_color": "#0a0a0c",
+  "theme_color": "#4285f4",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "https://img.icons8.com/color/512/gmail-new.png",
