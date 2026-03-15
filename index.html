@@ -3,133 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
-    <title>VULCAN | FRESH STREAM</title>
+    <title>VULCAN FRESH</title>
     <style>
-        :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --grey: #8a8d9a; --border: #2a2d35; --danger: #ff4d4d; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
-        
+        :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --border: #2a2d35; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
         #mod-menu {
-            width: 100%; max-width: 420px; height: 95vh;
-            background: #121214; border: 1px solid var(--border); border-radius: 20px; padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; display: flex; flex-direction: column;
+            width: 100%; max-width: 400px; height: 90vh;
+            background: #111; border: 1px solid var(--border); border-radius: 20px; padding: 25px;
+            display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,255,136,0.1);
         }
 
-        .logo-header { text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo-header h1 { font-size: 20px; text-transform: uppercase; letter-spacing: 2px; color: #fff; margin: 0; }
+        .logo-header { text-align: center; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .logo-header h1 { font-size: 20px; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: var(--blue); }
 
-        .address-section { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; }
-        #addr-box { background: #000; border-radius: 10px; padding: 12px; margin-bottom: 15px; border: 1px solid var(--blue); }
-        #addr-display { font-size: 14px; color: var(--green); font-weight: bold; overflow: hidden; text-overflow: ellipsis; }
+        .box { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        #addr-display { 
+            background: #000; padding: 15px; border-radius: 10px; border: 1px solid var(--green);
+            font-size: 13px; color: var(--green); font-weight: bold; margin-bottom: 15px;
+            word-break: break-all; min-height: 45px; display: flex; align-items: center; justify-content: center;
+        }
 
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .v-btn { border: none; border-radius: 10px; padding: 14px; font-weight: bold; font-size: 13px; cursor: pointer; color: white; }
-        .change-btn { background: var(--blue); }
+        .btn { border: none; border-radius: 10px; padding: 15px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; margin-top: 10px; }
+        .gen-btn { background: var(--blue); color: white; }
         .copy-btn { background: var(--green); color: black; }
         
-        #inbox-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .inbox-count { background: var(--blue); border-radius: 5px; padding: 2px 8px; font-size: 12px; }
+        #inbox-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; cursor: pointer; }
+        .count { background: var(--blue); padding: 2px 10px; border-radius: 5px; font-size: 12px; }
 
-        #status-log { font-size: 10px; color: #555; text-align: center; margin-top: auto; padding-top: 10px; }
-
-        #viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: none; flex-direction: column; padding: 20px; }
-        #view-body { background: #fff; color: #000; padding: 15px; border-radius: 10px; overflow-y: auto; flex-grow: 1; margin-top: 10px; }
+        #viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; flex-direction: column; padding: 20px; }
+        #view-body { background: #fff; color: #000; padding: 15px; border-radius: 10px; overflow-y: auto; flex-grow: 1; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <div id="mod-menu">
         <div class="logo-header">
-            <svg width="30" height="30" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" fill="none" stroke="var(--blue)" stroke-width="2"/>
-                <path d="M20 6l-8 5-8-5" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6" stroke="var(--green)"/></svg>
             <h1>VULCAN FRESH</h1>
         </div>
 
-        <div class="address-section">
-            <div id="addr-box">
-                <div id="addr-display">INITIALIZING...</div>
-            </div>
-            <div class="btn-row">
-                <button class="v-btn change-btn" onclick="genNew()">GENERATE</button>
-                <button class="v-btn copy-btn" onclick="copyAddr()">COPY</button>
-            </div>
+        <div class="box">
+            <div id="addr-display">CLICK GENERATE</div>
+            <button class="btn gen-btn" onclick="genNew()">GENERATE NEW</button>
+            <button class="btn copy-btn" onclick="copyAddr()">COPY ADDRESS</button>
         </div>
 
-        <div id="inbox-bar" onclick="showInbox()">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--blue)"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
-                <span style="font-weight:bold;">Mailbox</span>
-            </div>
-            <div class="inbox-count" id="count">0</div>
+        <div id="inbox-btn" onclick="showInbox()">
+            <span>INCOMING STREAM</span>
+            <span class="count" id="count">0</span>
         </div>
 
-        <div id="status-log">System: Ready</div>
+        <p id="status" style="font-size: 10px; color: #444; text-align: center; margin-top: auto;">System: Idle</p>
 
         <div id="viewer">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="color:var(--blue); margin:0;">Inbound Stream</h3>
-                <button onclick="hideViewer()" style="background:var(--danger); border:none; color:white; padding:5px 15px; border-radius:5px;">X</button>
-            </div>
-            <div id="view-body">No data...</div>
+            <button onclick="hideViewer()" style="padding: 10px; background: red; color: white; border: none; border-radius: 5px;">CLOSE X</button>
+            <div id="view-body">Waiting for packets...</div>
         </div>
     </div>
 
     <script>
-        // Use a CORS proxy to bypass browser security
-        const PROXY = "https://corsproxy.io/?";
-        const API = "https://api.mail.tm";
-        
-        let token = "", realMail = "";
+        let token = "", address = "";
+        const proxy = "https://api.allorigins.win/raw?url=";
+        const api = "https://api.mail.tm";
 
-        function log(msg) { document.getElementById('status-log').innerText = "Status: " + msg; }
+        function setStatus(t) { document.getElementById('status').innerText = "System: " + t; }
 
         async function genNew() {
-            log("Generating...");
-            document.getElementById('addr-display').innerText = "FETCHING...";
+            setStatus("Fetching Domain...");
+            document.getElementById('addr-display').innerText = "LOADING...";
             
             try {
-                // Fetch Domains
-                const domRes = await fetch(PROXY + encodeURIComponent(`${API}/domains`));
+                const domRes = await fetch(proxy + encodeURIComponent(api + "/domains"));
                 const domData = await domRes.json();
                 const domain = domData['hydra:member'][0].domain;
                 
-                realMail = "vlc_" + Math.random().toString(36).substring(7) + "@" + domain;
+                address = "vlc_" + Math.random().toString(36).substring(7) + "@" + domain;
                 const pass = "jordan123";
 
-                // Create Account
-                await fetch(PROXY + encodeURIComponent(`${API}/accounts`), {
+                setStatus("Creating Account...");
+                await fetch(api + "/accounts", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({address: realMail, password: pass})
+                    body: JSON.stringify({address, password: pass})
                 });
 
-                // Get Token
-                const tokRes = await fetch(PROXY + encodeURIComponent(`${API}/token`), {
+                setStatus("Getting Token...");
+                const tokRes = await fetch(api + "/token", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({address: realMail, password: pass})
+                    body: JSON.stringify({address, password: pass})
                 });
                 const tokData = await tokRes.json();
                 token = tokData.token;
 
-                document.getElementById('addr-display').innerText = realMail;
-                log("Online");
+                document.getElementById('addr-display').innerText = address;
+                setStatus("Online");
             } catch (err) {
-                log("CORS Error - Retrying");
-                console.error(err);
-                setTimeout(genNew, 2000);
+                setStatus("Error - Click Generate Again");
+                document.getElementById('addr-display').innerText = "READY";
             }
         }
 
         async function checkInbox() {
             if (!token) return;
             try {
-                const res = await fetch(PROXY + encodeURIComponent(`${API}/messages`), {
-                    headers: {'Authorization': `Bearer ${token}`}
+                const res = await fetch(api + "/messages", {
+                    headers: {'Authorization': 'Bearer ' + token}
                 });
                 const data = await res.json();
                 document.getElementById('count').innerText = data['hydra:member'].length;
@@ -141,26 +123,24 @@
 
         function renderInbox(msgs) {
             const body = document.getElementById('view-body');
-            if (msgs.length === 0) { body.innerHTML = "No messages."; return; }
+            if (msgs.length === 0) { body.innerHTML = "No mail received yet."; return; }
             body.innerHTML = msgs.map(m => `
-                <div style="padding:10px; border-bottom:1px solid #ddd; color:#000;">
-                    <b>${m.subject}</b><br><small>${m.from.address}</small>
+                <div style="padding:10px; border-bottom:1px solid #ddd;">
+                    <b style="color:#000;">${m.subject}</b><br><small>${m.from.address}</small>
                 </div>
             `).join('');
         }
 
         function copyAddr() {
-            navigator.clipboard.writeText(realMail);
-            log("Address Copied!");
+            if (!address) return;
+            navigator.clipboard.writeText(address);
+            document.getElementById('status').innerText = "System: Copied!";
         }
 
         function showInbox() { document.getElementById('viewer').style.display = 'flex'; checkInbox(); }
         function hideViewer() { document.getElementById('viewer').style.display = 'none'; }
 
-        window.onload = () => {
-            genNew();
-            setInterval(checkInbox, 5000);
-        };
+        setInterval(checkInbox, 5000);
     </script>
 </body>
 </html>
