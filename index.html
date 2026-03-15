@@ -5,61 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VULCAN FRESH</title>
     <style>
-        :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --border: #2a2d35; }
+        :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --border: #2a2d35; --danger: #ff4d4d; }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
 
         #mod-menu {
-            width: 100%; max-width: 400px; height: 90vh;
-            background: #111; border: 1px solid var(--border); border-radius: 20px; padding: 25px;
+            width: 100%; max-width: 400px; height: 95vh;
+            background: #111; border: 1px solid var(--border); border-radius: 20px; padding: 20px;
             display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,255,136,0.1);
         }
 
-        .logo-header { text-align: center; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo-header h1 { font-size: 20px; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: var(--blue); }
+        .logo-header { text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .logo-header h1 { font-size: 18px; text-transform: uppercase; letter-spacing: 2px; margin: 0; color: var(--blue); }
 
-        .box { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        .box { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 15px; text-align: center; }
         #addr-display { 
-            background: #000; padding: 15px; border-radius: 10px; border: 1px solid var(--green);
-            font-size: 13px; color: var(--green); font-weight: bold; margin-bottom: 15px;
-            word-break: break-all; min-height: 45px; display: flex; align-items: center; justify-content: center;
+            background: #000; padding: 12px; border-radius: 10px; border: 1px solid var(--green);
+            font-size: 13px; color: var(--green); font-weight: bold; margin-bottom: 12px;
+            word-break: break-all; min-height: 40px; display: flex; align-items: center; justify-content: center;
         }
 
-        .btn { border: none; border-radius: 10px; padding: 15px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; margin-top: 10px; }
+        .btn { border: none; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 13px; margin-top: 8px; transition: 0.1s; }
         .gen-btn { background: var(--blue); color: white; }
         .copy-btn { background: var(--green); color: black; }
+        .save-btn { background: #333; color: white; border: 1px solid #444; }
+        .btn:active { transform: scale(0.98); opacity: 0.8; }
         
-        #inbox-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; cursor: pointer; }
-        .count { background: var(--blue); padding: 2px 10px; border-radius: 5px; font-size: 12px; }
+        #inbox-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 15px; }
+        
+        .saved-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 8px; font-weight: bold; padding-left: 5px; }
+        #saved-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .saved-item { background: #1a1c22; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .saved-addr { font-size: 12px; color: var(--blue); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
+        .del-btn { color: var(--danger); font-weight: bold; cursor: pointer; padding: 5px; }
 
         #viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; flex-direction: column; padding: 20px; }
-        #view-body { background: #fff; color: #000; padding: 15px; border-radius: 10px; overflow-y: auto; flex-grow: 1; margin-top: 15px; }
+        #view-body { background: #fff; color: #000; padding: 15px; border-radius: 12px; overflow-y: auto; flex-grow: 1; margin-top: 15px; }
+        .view-header { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
 
     <div id="mod-menu">
         <div class="logo-header">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6" stroke="var(--green)"/></svg>
             <h1>VULCAN FRESH</h1>
         </div>
 
         <div class="box">
-            <div id="addr-display">CLICK GENERATE</div>
-            <button class="btn gen-btn" onclick="genNew()">GENERATE NEW</button>
-            <button class="btn copy-btn" onclick="copyAddr()">COPY ADDRESS</button>
+            <div id="addr-display">IDLE</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="btn gen-btn" onclick="genNew()">NEW</button>
+                <button class="btn copy-btn" onclick="copyAddr()">COPY</button>
+            </div>
+            <button class="btn save-btn" onclick="saveCurrent()">💾 SAVE SESSION</button>
         </div>
 
         <div id="inbox-btn" onclick="showInbox()">
-            <span>INCOMING STREAM</span>
-            <span class="count" id="count">0</span>
+            <span style="font-weight: bold; font-size: 14px;">OPEN INBOX</span>
+            <span id="count" style="background: var(--blue); padding: 2px 8px; border-radius: 4px; font-size: 12px;">0</span>
         </div>
 
-        <p id="status" style="font-size: 10px; color: #444; text-align: center; margin-top: auto;">System: Idle</p>
+        <div class="saved-label">Saved Sessions</div>
+        <div id="saved-list"></div>
 
         <div id="viewer">
-            <button onclick="hideViewer()" style="padding: 10px; background: red; color: white; border: none; border-radius: 5px;">CLOSE X</button>
+            <div class="view-header">
+                <button onclick="hideViewer()" style="flex:1; padding: 12px; background: #333; color: white; border: none; border-radius: 8px; font-weight: bold;">CLOSE</button>
+                <button onclick="checkInbox()" style="flex:1; padding: 12px; background: var(--green); color: black; border: none; border-radius: 8px; font-weight: bold;">REFRESH ↻</button>
+            </div>
             <div id="view-body">Waiting for packets...</div>
         </div>
     </div>
@@ -68,13 +83,10 @@
         let token = "", address = "";
         const proxy = "https://api.allorigins.win/raw?url=";
         const api = "https://api.mail.tm";
-
-        function setStatus(t) { document.getElementById('status').innerText = "System: " + t; }
+        let savedAccounts = JSON.parse(localStorage.getItem('v_saved_v1') || "[]");
 
         async function genNew() {
-            setStatus("Fetching Domain...");
             document.getElementById('addr-display').innerText = "LOADING...";
-            
             try {
                 const domRes = await fetch(proxy + encodeURIComponent(api + "/domains"));
                 const domData = await domRes.json();
@@ -83,14 +95,12 @@
                 address = "vlc_" + Math.random().toString(36).substring(7) + "@" + domain;
                 const pass = "jordan123";
 
-                setStatus("Creating Account...");
                 await fetch(api + "/accounts", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({address, password: pass})
                 });
 
-                setStatus("Getting Token...");
                 const tokRes = await fetch(api + "/token", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -100,47 +110,93 @@
                 token = tokData.token;
 
                 document.getElementById('addr-display').innerText = address;
-                setStatus("Online");
+                checkInbox();
             } catch (err) {
-                setStatus("Error - Click Generate Again");
-                document.getElementById('addr-display').innerText = "READY";
+                document.getElementById('addr-display').innerText = "RETRYING...";
+                setTimeout(genNew, 2000);
             }
+        }
+
+        function saveCurrent() {
+            if (!token || !address) return;
+            if (savedAccounts.find(a => a.address === address)) return;
+            
+            savedAccounts.push({address, token});
+            localStorage.setItem('v_saved_v1', JSON.stringify(savedAccounts));
+            renderSaved();
+        }
+
+        function renderSaved() {
+            const list = document.getElementById('saved-list');
+            list.innerHTML = savedAccounts.map((acc, i) => `
+                <div class="saved-item">
+                    <div class="saved-addr" onclick="loadAccount(${i})">${acc.address}</div>
+                    <div class="del-btn" onclick="deleteAccount(${i})">✕</div>
+                </div>
+            `).join('');
+        }
+
+        function loadAccount(i) {
+            const acc = savedAccounts[i];
+            address = acc.address;
+            token = acc.token;
+            document.getElementById('addr-display').innerText = address;
+            showInbox();
+        }
+
+        function deleteAccount(i) {
+            savedAccounts.splice(i, 1);
+            localStorage.setItem('v_saved_v1', JSON.stringify(savedAccounts));
+            renderSaved();
         }
 
         async function checkInbox() {
             if (!token) return;
+            document.getElementById('view-body').innerText = "Refreshing Stream...";
             try {
                 const res = await fetch(api + "/messages", {
                     headers: {'Authorization': 'Bearer ' + token}
                 });
                 const data = await res.json();
-                document.getElementById('count').innerText = data['hydra:member'].length;
-                if (document.getElementById('viewer').style.display === 'flex') {
-                    renderInbox(data['hydra:member']);
+                const msgs = data['hydra:member'];
+                document.getElementById('count').innerText = msgs.length;
+                
+                const body = document.getElementById('view-body');
+                if (msgs.length === 0) {
+                    body.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>No mail yet.</p>";
+                } else {
+                    body.innerHTML = msgs.map(m => `
+                        <div style="padding:12px; border-bottom:1px solid #eee; font-size:13px;">
+                            <b style="color:#000;">${m.subject}</b><br>
+                            <span style="color:#666;">From: ${m.from.address}</span>
+                        </div>
+                    `).join('');
                 }
-            } catch (e) {}
-        }
-
-        function renderInbox(msgs) {
-            const body = document.getElementById('view-body');
-            if (msgs.length === 0) { body.innerHTML = "No mail received yet."; return; }
-            body.innerHTML = msgs.map(m => `
-                <div style="padding:10px; border-bottom:1px solid #ddd;">
-                    <b style="color:#000;">${m.subject}</b><br><small>${m.from.address}</small>
-                </div>
-            `).join('');
+            } catch (e) {
+                document.getElementById('view-body').innerText = "Sync Error.";
+            }
         }
 
         function copyAddr() {
             if (!address) return;
             navigator.clipboard.writeText(address);
-            document.getElementById('status').innerText = "System: Copied!";
+            const display = document.getElementById('addr-display');
+            const oldText = display.innerText;
+            display.innerText = "COPIED!";
+            setTimeout(() => display.innerText = oldText, 800);
         }
 
-        function showInbox() { document.getElementById('viewer').style.display = 'flex'; checkInbox(); }
-        function hideViewer() { document.getElementById('viewer').style.display = 'none'; }
+        function showInbox() { 
+            document.getElementById('viewer').style.display = 'flex'; 
+            checkInbox(); 
+        }
+        function hideViewer() { 
+            document.getElementById('viewer').style.display = 'none'; 
+        }
 
-        setInterval(checkInbox, 5000);
+        // Initialize
+        renderSaved();
+        setInterval(checkInbox, 10000);
     </script>
 </body>
 </html>
