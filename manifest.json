@@ -1,0 +1,16 @@
+{
+  "name": "Vulcan Fresh Stream",
+  "short_name": "Vulcan",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#121214",
+  "theme_color": "#00c389",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/512/gmail-new.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
