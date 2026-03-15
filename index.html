@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
     <title>VULCAN FRESH</title>
     <style>
         :root { --bg: #0a0a0c; --panel: #16181d; --text: #ffffff; --green: #00ff88; --blue: #4285f4; --border: #2a2d35; --danger: #ff4d4d; }
@@ -39,10 +42,8 @@
         .saved-addr { font-size: 12px; color: var(--blue); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
         .del-btn { color: var(--danger); font-weight: bold; cursor: pointer; padding: 5px; }
 
-        /* Layers */
         #viewer, #msg-reader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; flex-direction: column; padding: 20px; }
         #msg-reader { z-index: 101; background: #050505; }
-
         #view-body, #read-body { background: #fff; color: #000; padding: 15px; border-radius: 12px; overflow-y: auto; flex-grow: 1; margin-top: 15px; }
         .view-header { display: flex; gap: 10px; }
     </style>
@@ -83,7 +84,7 @@
 
         <div id="msg-reader">
             <button onclick="closeReader()" style="padding: 12px; background: #333; color: white; border: none; border-radius: 8px; font-weight: bold; width: 100%;">← BACK TO INBOX</button>
-            <div id="read-body">Loading content...</div>
+            <div id="read-body">Loading...</div>
         </div>
     </div>
 
@@ -110,8 +111,7 @@
                 document.getElementById('addr-display').innerText = address;
                 checkInbox();
             } catch (err) {
-                document.getElementById('addr-display').innerText = "RETRYING...";
-                setTimeout(genNew, 2000);
+                document.getElementById('addr-display').innerText = "ERROR - RETRY";
             }
         }
 
@@ -135,8 +135,7 @@
 
         function loadAccount(i) {
             const acc = savedAccounts[i];
-            address = acc.address;
-            token = acc.token;
+            address = acc.address; token = acc.token;
             document.getElementById('addr-display').innerText = address;
             showInbox();
         }
@@ -157,50 +156,31 @@
                 
                 const body = document.getElementById('view-body');
                 if (msgs.length === 0) {
-                    body.innerHTML = "<p style='text-align:center; color:#999; margin-top:50px;'>No mail yet.</p>";
+                    body.innerHTML = "<p style='text-align:center; color:#999;'>Empty.</p>";
                 } else {
                     body.innerHTML = msgs.map(m => `
-                        <div onclick="readMessage('${m.id}')" style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; background:#fff;">
-                            <b style="color:#000; font-size:14px;">${m.subject}</b><br>
-                            <span style="color:var(--blue); font-size:11px;">From: ${m.from.address}</span>
+                        <div onclick="readMessage('${m.id}')" style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; background:#fff; color:#000;">
+                            <b>${m.subject}</b><br><span style="color:var(--blue); font-size:11px;">${m.from.address}</span>
                         </div>
                     `).join('');
                 }
-            } catch (e) { console.error("Refresh failed"); }
+            } catch (e) {}
         }
 
         async function readMessage(id) {
             document.getElementById('msg-reader').style.display = 'flex';
-            document.getElementById('read-body').innerHTML = "<p style='text-align:center;'>Opening Packet...</p>";
+            document.getElementById('read-body').innerHTML = "Opening...";
             try {
                 const res = await fetch(api + "/messages/" + id, { headers: {'Authorization': 'Bearer ' + token} });
                 const m = await res.json();
-                document.getElementById('read-body').innerHTML = `
-                    <div style="padding-bottom:15px; border-bottom:1px solid #ddd; margin-bottom:15px;">
-                        <h3 style="margin:0; font-size:18px;">${m.subject}</h3>
-                        <p style="font-size:12px; color:#666; margin:5px 0;">From: ${m.from.address}</p>
-                    </div>
-                    <div style="font-size:14px; line-height:1.5; color:#222;">
-                        ${m.html ? m.html[0] : (m.text || "No content.")}
-                    </div>
-                `;
-            } catch (e) {
-                document.getElementById('read-body').innerHTML = "Failed to load message.";
-            }
+                document.getElementById('read-body').innerHTML = `<h3>${m.subject}</h3><hr><div style="font-size:14px;">${m.html ? m.html[0] : (m.text || "")}</div>`;
+            } catch (e) { document.getElementById('read-body').innerHTML = "Failed."; }
         }
 
         function closeReader() { document.getElementById('msg-reader').style.display = 'none'; }
-        function copyAddr() {
-            if (!address) return;
-            navigator.clipboard.writeText(address);
-            const display = document.getElementById('addr-display');
-            const oldText = display.innerText;
-            display.innerText = "COPIED!";
-            setTimeout(() => display.innerText = oldText, 800);
-        }
-
         function showInbox() { document.getElementById('viewer').style.display = 'flex'; checkInbox(); }
         function hideViewer() { document.getElementById('viewer').style.display = 'none'; }
+        function copyAddr() { navigator.clipboard.writeText(address); }
 
         renderSaved();
         setInterval(checkInbox, 10000);
