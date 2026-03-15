@@ -1,7 +1,7 @@
 {
-  "name": "Vulcan Fresh Stream",
+  "name": "Vulcan Fresh",
   "short_name": "Vulcan",
-  "description": "Secure Temporary Packet Stream and Mailbox",
+  "description": "Secure Temporary Packet Stream",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0c",
